@@ -1,0 +1,81 @@
+# ==============================================================================
+# project.conf.template
+# Virtual host de Nginx: redirección HTTP->HTTPS, terminación TLS y hardening.
+#
+# Antes de usar, reemplazar:
+#   <TU_DOMINIO>        -> ej. midominio.duckdns.org
+#   <RUTA_BACKEND_HOST>  -> ej. 127.0.0.1 (si el backend está en el mismo host)
+#   <PUERTO_BACKEND>     -> ej. 8080
+#
+# Instalación:
+#   sudo cp project.conf.template /etc/nginx/sites-available/<TU_DOMINIO>
+#   sudo ln -s /etc/nginx/sites-available/<TU_DOMINIO> /etc/nginx/sites-enabled/
+#   sudo nginx -t && sudo systemctl restart nginx
+# ==============================================================================
+
+# --- Bloque HTTP: redirección forzada a HTTPS ---
+server {
+    listen 80;
+    listen [::]:80;
+    server_name <TU_DOMINIO>;
+
+    return 301 https://$host$request_uri;
+}
+
+# --- Bloque HTTPS: terminación TLS + hardening ---
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name <TU_DOMINIO>;
+
+    # Certificados emitidos por Certbot (ver scripts/setup-environment.sh)
+    ssl_certificate     /etc/letsencrypt/live/<TU_DOMINIO>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<TU_DOMINIO>/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Protocolos y cifrados (TLS 1.2/1.3 únicamente)
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    root /var/www/html;
+    index index.html index.htm;
+
+    # ===================== Cabeceras de seguridad (hardening) =====================
+    # Fuerza conexiones seguras durante 1 año, incluye subdominios
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+    # Previene ataques de MIME-sniffing
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # Protección contra Clickjacking
+    add_header X-Frame-Options "SAMEORIGIN" always;
+
+    # Política de Seguridad de Contenido (ajustar dominios permitidos según recursos externos)
+    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;" always;
+
+    # Referrer policy conservadora
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Deshabilita política de permisos de features del navegador no usadas
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+    # ================================================================================
+
+    location / {
+        add_header Cache-Control "no-cache, no-store, must-revalidate, private";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+        try_files $uri $uri/ =404;
+    }
+
+    # --- (Opcional) Proxy hacia un backend desacoplado en otro puerto ---
+    # Descomentar si el proyecto expone una API o aplicación backend:
+    #
+    # location /api/ {
+    #     proxy_pass http://<RUTA_BACKEND_HOST>:<PUERTO_BACKEND>/;
+    #     proxy_set_header Host $host;
+    #     proxy_set_header X-Real-IP $remote_addr;
+    #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #     proxy_set_header X-Forwarded-Proto $scheme;
+    # }
+}

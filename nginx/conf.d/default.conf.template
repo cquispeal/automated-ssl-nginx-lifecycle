@@ -1,0 +1,32 @@
+# ==============================================================================
+# default.conf.template
+# Plantilla de configuración global de Nginx (bloque http {})
+# Copiar contenido relevante dentro de /etc/nginx/nginx.conf
+#
+# Reemplazar los marcadores <...> antes de usar.
+# ==============================================================================
+
+# Oculta la versión de Nginx en las cabeceras de respuesta y en páginas de error
+server_tokens off;
+
+# Límite de tamaño de subida (ajustar según necesidad del proyecto)
+client_max_body_size 10M;
+
+# Tiempo de espera de conexiones inactivas
+keepalive_timeout 65;
+
+# Compresión (opcional, mejora rendimiento sin afectar seguridad)
+gzip on;
+gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+# Zona de log personalizada para auditoría de accesos
+log_format security_audit '$remote_addr - $remote_user [$time_local] '
+                           '"$request" $status $body_bytes_sent '
+                           '"$http_referer" "$http_user_agent" '
+                           'rt=$request_time';
+
+access_log /var/log/nginx/access.log security_audit;
+error_log  /var/log/nginx/error.log warn;
+
+# Incluir los sitios habilitados (ver nginx/sites-available/project.conf.template)
+include /etc/nginx/sites-enabled/*;
