@@ -96,6 +96,6 @@ systemctl status certbot.timer --no-pager || true
 certbot renew --dry-run
 
 echo ""
-echo "✅ Despliegue completado para ${DOMAIN}"
-echo "   Verifica las cabeceras de seguridad con:"
-echo "   curl -I -k https://${DOMAIN}"
+echo " Despliegue completado para ${DOMAIN}"
+echo " Verifica las cabeceras de seguridad con:"
+echo " curl -I -k https://${DOMAIN}"
