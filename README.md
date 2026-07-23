@@ -267,4 +267,4 @@ Este proyecto se distribuye bajo la licencia MIT. Consulta el archivo [`LICENSE`
 
 **Christian Quispe Alarcón**
 Estudiante de Ingeniería de Ciberseguridad — SENATI
-[LinkedIn](https://linkedin.com/in/christian-quispe) · [GitHub](#) · [Correo](#)
+[LinkedIn](https://linkedin.com/in/christian-quispe) · [GitHub](https://github.com/cquispeal)
