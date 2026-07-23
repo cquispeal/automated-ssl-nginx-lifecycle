@@ -10,7 +10,7 @@
 #
 # Requisitos previos:
 #   - Ubuntu 22.04+/24.04
-#   - Reglas de firewall del proveedor cloud abiertas para TCP 443
+#   - Reglas de firewall del proveedor cloud abiertas para TCP 80 y 443
 #   - Plugin certbot-dns-<proveedor> compatible con tu proveedor DNS
 # ==============================================================================
 
