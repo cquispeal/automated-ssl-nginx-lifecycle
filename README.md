@@ -265,6 +265,6 @@ Este proyecto se distribuye bajo la licencia MIT. Consulta el archivo [`LICENSE`
 
 ## 👤 Autor
 
-**Christian Quispe Alarcón**
+**Christian A. Quispe A.**
 Junior Security Engineer | SecOps & Infrastructure Automation | Ciberseguridad — SENATI
 [LinkedIn](https://linkedin.com/in/christian-quispe) · [GitHub](https://github.com/cquispeal)
